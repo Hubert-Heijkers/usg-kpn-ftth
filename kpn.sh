@@ -162,6 +162,11 @@ if [ $(cli-shell-api returnActiveValue vpn l2tp remote-access dhcp-interface) ];
     exit
 fi
 
+# refresh my namecheap ddns record for host.domain.tld
+wanIP=$(ip addr show pppoe2 | grep "inet " | awk '{ print $2 }')
+echo "[$(date)] [kpn.sh] Setting host.domain.tld DDNS record to $wanIP" >> ${logFile}
+curl -s "https://dynamicdns.park-your-domain.com/update?host=[host]&domain=[domain.tld]&password=[password]&ip=$wanIP" -o /dev/null
+
 # removing lock file and finish execution
 echo "[$(date)] [kpn.sh] removing lock file at /config/scripts/post-config.d/kpn.lock" >> ${logFile}
 rm /config/scripts/post-config.d/kpn.lock
